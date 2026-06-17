@@ -45,12 +45,10 @@ en blijft staan als de plugin een update krijgt.
 
 ## Installeren (voor gebruikers)
 
-> Vervang hieronder `JOUW-GITHUB/zzp-admin-skills` door de echte repo (owner/repo).
-
 Eenmalig, in Claude Code:
 
 ```text
-/plugin marketplace add JOUW-GITHUB/zzp-admin-skills
+/plugin marketplace add mathijs-oord/zzp-admin-skills
 /plugin install boekhoud@boekhoud-marketplace
 ```
 
