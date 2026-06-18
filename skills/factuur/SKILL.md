@@ -29,9 +29,16 @@ eerdere facturen voor dezelfde klant.
 - Geen eerdere factuur én geen input → vraag de gebruiker om regels (omschrijving, aantal,
   eenheid, tarief).
 
-### 3. Bepaal BTW
-- Default: **NL 21%** per regel. 9% of 0% alleen als de gebruiker dat expliciet aangeeft;
-  gemengde tarieven per regel mogen (zie `$CLAUDE_PLUGIN_ROOT/rules/btw-tarieven.md`).
+### 3. Bepaal BTW — **per regel**
+- Bepaal voor **elke regel afzonderlijk** het juiste tarief (`vat_percentage`); regels op één
+  factuur mogen verschillen. Voor de meeste diensten (consultancy/development/design) is dat
+  **21%**, maar classificeer naar de aard van de regel: **voedsel, boeken, medicijnen, kapper,
+  fietsenmaker → 9%** (zie `$CLAUDE_PLUGIN_ROOT/rules/btw-tarieven.md`). Twijfel je over een
+  regel, of valt 'n product mogelijk onder het verlaagde tarief? Lees de regels en/of leg het
+  kort aan de gebruiker voor in de preview — gok niet stilzwijgend op 21%.
+- De code splitst gemengde facturen automatisch: de PDF toont dan een **BTW-kolom per regel** +
+  een totaalregel per tarief, en de aangifte boekt elke regel in de juiste rubriek (1a/1b/1e).
+  Bij één uniform tarief blijft de BTW-kolom weg (tarief staat dan onderaan).
 - **Uitzondering — verlegd** (`vat_reverse_charged: true`): alléén als je een **buitenlandse
   zakelijke klant** factureert (BTW-nummer begint niet met `NL`). Dan geen BTW op de factuur +
   automatische verleggings-zin op de PDF, en het telt in rubriek 3a/3b + ICP. Zeldzaam — bij
@@ -53,10 +60,12 @@ totaal deterministisch te krijgen. Toon een **compacte** preview met alleen besl
 
 ```
 Factuur 2026-0005 — Voorbeeld Klant B.V. — datum 05-06-2026, vervalt 19-06-2026
-  24    Uren   Consultancy apr 2026        € 100,00   € 2.400,00
-  5,5   Uren   AI-consultancy apr 2026     € 100,00   €   550,00
+  24    Uren   Consultancy apr 2026        € 100,00   (21%)  € 2.400,00
+  5,5   Uren   AI-consultancy apr 2026     € 100,00   (21%)  €   550,00
   Subtotaal € 2.950,00   BTW 21% € 619,50   Totaal € 3.569,50
 ```
+Bij gemengde tarieven toon je het tarief per regel en de BTW per tarief, bv.:
+`Subtotaal € 625,00   BTW 21% € 89,25 + BTW 9% € 18,00   Totaal € 732,25`.
 
 Vraag expliciet om bevestiging vóór je iets wegschrijft. Pas aan op feedback en toon opnieuw.
 
